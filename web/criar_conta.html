@@ -1,0 +1,110 @@
+<html>
+    <head>
+        <title>Conta</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="js/jQuery.js"      type="text/javascript" ></script>
+        <script src="js/jquery-ui.js"   type="text/javascript" ></script>
+        <script src="js/jquery-1.6.2.js" type="text/javascript"></script>
+        <script src="js/jquery.validate.js" type="text/javascript"></script>
+        <link href="css/estilo.css"  type="text/css" rel="stylesheet" />
+    </head>
+    <body>
+        <form id="conta" name="conta" method="post" action="DAO/criar_conta.jsp">
+            <h1>Conta Massagem</h1>
+            <label for="mat">Matrícula:</label>
+            <input type="text" id="mat" name="mat" placeholder="f0000000" style="text-transform: lowercase" maxlength="8"> 
+            <br><br>
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" placeholder="Nome e Sobrenome"> 
+            <br><br>
+            <label for="snh">Criar senha:</label>
+            <input type="text" id="snh" name="snh" placeholder="8 caracteres" maxlength="8">
+            <br><br>
+            <input type="submit" value="ok" id="btn_ok"/><br><br>
+             © Ariana Maciel
+        </form>
+        <footer>
+            <br><br><br><br><br><br>
+            <input type="button" value="Voltar" onclick="history.go(-1)">
+            <input type="button" value="Atualizar" onclick="history.go(0)">
+            <input type="button" value="Avançar" onclick="history.forward()">
+        </footer>
+                <script>
+//                    $(document).ready(function() {
+//                        $("#btn_ok").click(function() {
+//                             $.get("DAO/criar_conta.jsp",{mat: $("#mat").val(), snh: $("#snh").val(), nome: $("#nome").val()},function(json){
+//                                 if (json)
+//                                 {
+//                                     alert("Conta criada com sucesso!");
+//                                     window.location.href = "home.html";
+//                                 }
+//                             });
+//                             alert("click");
+//                        });
+//                    });
+                   
+                   /* REGRAS DE VALIDACAO DO FORMULARIO */
+                    $(document).ready( function() {
+                        $("#conta").validate({
+                        rules:{
+                                mat:{
+                                        required: true, 
+                                        minlength: 8    
+                                },
+                                nome:{
+                                        required: true 
+                                },
+                                snh:{
+                                        required: true,
+                                        minlength: 8         
+                                }
+                        },
+		/* DEFININDO MENSAGENS DE ERRO */
+                        messages:{
+                                mat:{
+                                        required: "Preencha o campo Matrícula",
+                                        minlength: "O campo matrícula necessita de 8 dígitos!"
+                                        
+                                },
+                                nome:{
+                                        required: "Preencha o campo Nome!"
+                                },
+                                snh:{
+                                        required: "Preencha o campo Senha!",
+                                        minlength: "O campo senha necessita de 8 dígitos!",
+                                        digits: true
+                                }
+                        },
+                        submitHandler: function(form){
+                            var r = new RegExp("f[0-9]{7}");
+                            if (form.mat.value.match(r) === null)
+                            {
+                                alert("Matrícula inicia com F");
+                                return false;
+                            }
+                            else
+                            {
+                                //ajax para checar se matricla existe
+                                 $.get("DAO/buscar_matricula.jsp",{mat: $("#mat").val()},function(json)
+                                 {
+                                    if (json)
+                                    {
+                                        alert("Conta já existe!");
+                                    }
+                                    else
+                                    {
+                                        var a = $("#nome").va();
+                                        alert('Bem-vindo!' + a);
+                                        form.submit();
+                                    }
+                                 });
+                            }
+                          
+                            
+                        }
+                    });
+                });
+                </script>
+    </body>
+</html>
