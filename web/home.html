@@ -59,14 +59,14 @@
                 ed.setMinutes(0, 0, 0);
 
                 scheduler.addEvent
-                        ({
-                            start_date: sd,
-                            end_date: ed,
-                            text: "Reserva 1",
-                            holder: "John", // userdata
-                            room: "5", // userdata
-                            from_server: true
-                        });
+                ({
+                    start_date: sd,
+                    end_date: ed,
+                    text: "Reserva 1",
+                    holder: "John", // userdata
+                    room: "5", // userdata
+                    from_server: true
+                });
 
                 sd = new Date();
                 sd.setMinutes(sd.getMinutes() + 60);
@@ -331,9 +331,56 @@
             scheduler.config.last_hour = 18;
             scheduler.config.scroll_hour = new Date().getHours();
             scheduler.init('scheduler_here', new Date(), "week");
+            
+            var schedulerDate = scheduler.getState().date;
+            var dataInicio = schedulerDate.getFullYear() + '-' + (schedulerDate.getMonth()+1)  + '-' + schedulerDate.getDate();
+            
+            /*
+            $.get("DAO/busca_massagem.jsp",{data: dataInicio},function(json)
+            {
+               for(var i=0; i<json.eventos.length; i++)
+               {
+                   console.log(json[i].mensagem);
+               }
+            });
+    
+            $.ajax
+            ({
+                dataType: "json",
+                url: "DAO/busca_massagem.jsp",
+                data: {data: dataInicio},
+                success: function(data)
+                {
+                   alert(data);
+                   for(var i=0; i<data.eventos.length; i++)
+                   {
+                       console.log(data.eventos[i].mensagem);
+                   }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log("error " + textStatus);
+                    console.log("incoming Text " + jqXHR.responseText);
+                }
+            });*/
+            
+            $.getJSON("DAO/busca_massagem.jsp",{data: dataInicio}, function(data)
+            {
+                for(var i=0; i<data.eventos.length; i++)
+                {
+                    var evento = data.eventos[i];
+                    scheduler.addEvent
+                    ({
+                        start_date: evento.data_inicio,
+                        end_date: evento.data_fim,
+                        text: evento.mensagem,
+                        is_break: evento.intervalo,
+                        from_server: true
+                    });                   
+                }
+            });
 
             //addFromServer();
-            readFromServer();
+            //readFromServer();
             //loadFromServer();
             //readFromJSP();
         </script>
