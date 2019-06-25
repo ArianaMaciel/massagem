@@ -10,6 +10,7 @@
 <%@page import="java.sql.Statement"%>
 <%@page import="java.sql.DriverManager"%>
 <%@page import="java.sql.Connection"%>
+
 <%@page contentType="application/json charset=UTF-8"%>
 
 <%
@@ -36,6 +37,7 @@
     java.sql.Date d2 = new Date(d.getTime());
     ps.setDate(1, d2);
     System.out.println(d2);
+    
     //ps.setDate(1, new SimpleDateFormat("yyyy-dd-MM").parse(dataInicio));
     //ps.setDate(1, dataInicio);
     ResultSet rs = ps.executeQuery();
@@ -45,13 +47,15 @@
         JSONObject evento = new JSONObject();
         evento.put("id_massagem", rs.getInt(1));
         evento.put("mensagem", rs.getString(2));
+       
+        Timestamp dt_ini = rs.getTimestamp(3);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        evento.put("data_inicio", sdf.format(dt_ini));
+        evento.put("data_inicio_long", dt_ini.getTime());
         
-        Date dt_ini = rs.getDate(3);
-        evento.put("data_inicio", dt_ini.toString());
-        
-        Date dt_fim = rs.getDate(4);
-        evento.put("data_fim", dt_fim.toString());
-        
+        Timestamp dt_fim = rs.getTimestamp(4);
+        evento.put("data_fim", sdf.format(dt_fim));
+        evento.put("data_fim_long", dt_fim.getTime());
         
         evento.put("intervalo", rs.getByte(5));
         evento.put("id_usuario", rs.getInt(6));          
@@ -62,11 +66,11 @@
     
     JSONObject json = new JSONObject();
     json.put("eventos", eventos);
-    
+    json.put("usuario", request.getSession().getAttribute("usuario"));
     
     response.setContentType("application/json");
     response.setCharacterEncoding("UTF-8"); 
-     System.out.println(">>>>> montou json 2");
+    System.out.println(">>>>> montou json 2");
     response.getWriter().print(json);
 
     

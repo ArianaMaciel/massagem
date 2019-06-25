@@ -19,7 +19,7 @@
             <input type="text" id="nome" name="nome" placeholder="Nome e Sobrenome"> 
             <br><br>
             <label for="snh">Criar senha:</label>
-            <input type="text" id="snh" name="snh" placeholder="8 caracteres" maxlength="8">
+            <input type="password" id="snh" name="snh" placeholder="8 caracteres" maxlength="8">
             <br><br>
             <input type="submit" value="ok" id="btn_ok"/><br><br>
              © Ariana Maciel
@@ -31,18 +31,17 @@
             <input type="button" value="Avançar" onclick="history.forward()">
         </footer>
                 <script>
-//                    $(document).ready(function() {
-//                        $("#btn_ok").click(function() {
-//                             $.get("DAO/criar_conta.jsp",{mat: $("#mat").val(), snh: $("#snh").val(), nome: $("#nome").val()},function(json){
-//                                 if (json)
-//                                 {
-//                                     alert("Conta criada com sucesso!");
-//                                     window.location.href = "home.html";
-//                                 }
-//                             });
-//                             alert("click");
-//                        });
-//                    });
+                    $(document).ready(function() {
+                        $("#btn_ok").click(function() {
+                             $.get("DAO/criar_conta.jsp",{mat: $("#mat").val(), snh: $("#snh").val(), nome: $("#nome").val()},function(json){
+                                 if (json)
+                                 { 
+                                     alert("Conta criada com sucesso!");
+                                     window.location.href = "home.html";
+                                 }
+                             });
+                        });
+                    });
                    
                    /* REGRAS DE VALIDACAO DO FORMULARIO */
                     $(document).ready( function() {

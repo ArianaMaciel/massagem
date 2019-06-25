@@ -28,7 +28,7 @@
     String mat = request.getParameter("mat");
     String snh = request.getParameter("snh");
     
-    String sql = "SELECT senha FROM usuarios WHERE matricula=?";
+    String sql = "SELECT id_usuario, nome, senha, tipo FROM usuarios WHERE matricula=?";
     PreparedStatement ps = con.prepareStatement(sql);
 
     ps.setString(1, mat);
@@ -40,10 +40,22 @@
     //checar se a matricula e a senha são válidas   
     if(rs.next())
     {
+        String nome = rs.getString("nome");
+        String tipo = rs.getString("tipo");
+        Integer id_usuario = rs.getInt("id_usuario");
         String senha = rs.getString("senha");
         if (senha.equals(snh))
         {
+            JSONObject usuario = new JSONObject();
+            usuario.put("id_usuario", id_usuario);
+            usuario.put("nome", nome);
+            usuario.put("senha", senha);
+            usuario.put("matricula", mat);
+            usuario.put("tipo", tipo);
+            request.getSession().setAttribute("usuario", usuario); 
+            
             loginValido = true;
+             
         }
         else
         {
@@ -60,5 +72,7 @@
     JSONObject json = new JSONObject();
     json.put("loginValido", loginValido);
     json.put("mensagem", mensagem);
+    
+    
     response.getWriter().print(json);
 %>
