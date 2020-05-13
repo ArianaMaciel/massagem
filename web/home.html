@@ -14,6 +14,8 @@
         </style>
     </head>
     <body>
+        <input type="hidden" id="id_usuario" />
+        <div id="usuario"></div>
         <div id="scheduler_here" class="dhx_cal_container" style='width:100%; height:100vh;'>
             <div class="dhx_cal_navline">
                 <div class="dhx_cal_prev_button">&nbsp;</div>
@@ -313,7 +315,12 @@
             {
                 if (!ev.from_server)
                 {
-                    alert("Adicionou agendamento, enviar dados por ajax");
+                    $.getJSON("DAO/grava_massagem.jsp",{data_inicio: ev.start_date.getTime(), data_fim: ev.end_date.getTime(), mensagem: ev.text}, function(json)
+                    {               
+                        alert(json.mensagem);
+                    });
+                    
+                    //alert("Adicionou agendamento, enviar dados por ajax");
                 }
             });
 
@@ -364,17 +371,20 @@
             });*/
             
             $.getJSON("DAO/busca_massagem.jsp",{data: dataInicio}, function(data)
-            {
+            {               
+                $("#usuario").html(data.usuario.nome);
+                $("#id_usuario").val(data.usuario.id_usuario);
                 for(var i=0; i<data.eventos.length; i++)
                 {
                     var evento = data.eventos[i];
                     scheduler.addEvent
                     ({
-                        start_date: evento.data_inicio,
-                        end_date: evento.data_fim,
+                        start_date: new Date(evento.data_inicio_long),
+                        end_date: new Date(evento.data_fim_long),
                         text: evento.mensagem,
                         is_break: evento.intervalo,
-                        from_server: true
+                        from_server: true,
+                        id_usuario: evento.id_usuario
                     });                   
                 }
             });

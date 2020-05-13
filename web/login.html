@@ -1,344 +1,52 @@
-
 <html>
     <head>
-        <title>Getting started with dhtmlxScheduler</title>
-        <meta charset="utf-8">
-        <script src="https://cdn.dhtmlx.com/scheduler/edge/dhtmlxscheduler.js"></script>
-        <script src="https://cdn.dhtmlx.com/scheduler/edge/ext/dhtmlxscheduler_collision.js"></script>	
-        <link href="https://cdn.dhtmlx.com/scheduler/edge/dhtmlxscheduler_material.css" rel="stylesheet" type="text/css" charset="utf-8">
-        <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
-        <style>
-            html, body {
-                margin: 0px;
-                padding: 0px;
-            }
-        </style>
+        <title>Agenda</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="js/jQuery.js"      type="text/javascript" ></script>
+        <script src="js/jquery-ui.js"   type="text/javascript" ></script>
+        <script src="js/jquery-1.6.2.js" type="text/javascript"></script>
+        <script src="js/jquery.validate.js" type="text/javascript"></script>
+        <link href="css/estilo.css"  type="text/css" rel="stylesheet" />
     </head>
     <body>
-        <div id="scheduler_here" class="dhx_cal_container" style='width:100%; height:100vh;'>
-            <div class="dhx_cal_navline">
-                <div class="dhx_cal_prev_button">&nbsp;</div>
-                <div class="dhx_cal_next_button">&nbsp;</div>
-                <div class="dhx_cal_today_button"></div>
-                <div class="dhx_cal_date"></div>
-                <div class="dhx_cal_tab" name="day_tab"></div>
-                <div class="dhx_cal_tab" name="week_tab"></div>
-                <div class="dhx_cal_tab" name="month_tab"></div>
-            </div>
-            <div class="dhx_cal_header"></div>
-            <div class="dhx_cal_data"></div>
-        </div>
-        <script>
-            scheduler.config.hour_size_px = 176;
-            function addDays(date, days)
-            {
-                var result = new Date(date);
-                result.setDate(result.getDate() + days);
-
-                return result;
-            }
-
-            function loadFromServer()
-            {
-                scheduler.load("https://jsonplaceholder.typicode.com/users", "json", function (json)
-                {
-                    alert(json[0].name);
+        <form id="lg" name="lg" method="post" action="DAO/login.jsp">
+            <h1>Login Massagem</h1>
+            Matrícula:
+            <input type="text" id="mat" name="mat" placeholder="f0000000" style="text-transform: lowercase" maxlength="8"> <br><br>
+            Senha:
+            <input type="password" id="snh" name="snh" placeholder="8 caracteres" maxlength="8"><br><br>
+            <input type="button" value="entrar" id="btn_login"><br><br>
+            <input type="button" value="criar conta" id="btn_criar_conta"><br><br>
+            <a href="criar_conta.html"> Criar conta </a>
+        </form>
+                <script>
+                    $(document).ready( function() {
+                    $("#btn_login").click(function()
+                        {
+                             $.get("DAO/login.jsp",{mat: $("#mat").val(), snh: $("#snh").val()},function(json)
+                             {
+                                 if (json.loginValido)
+                                 {
+                                     window.location.href = "home.html";
+                                 }
+                                 else
+                                 {
+                                     alert(json.mensagem);
+                                 }
+                             });
+                        });       
                     
-                });
-            }
-
-            function addFromServer()
-            {
-                alert("Trazendo dados do servidor");
-
-                var sd = new Date();
-                sd.setMinutes(sd.getMinutes() - 30);
-                sd.setMinutes(0, 0, 0);
-
-                var ed = new Date();
-                ed.setMinutes(ed.getMinutes() + 30);
-                ed.setMinutes(0, 0, 0);
-
-                scheduler.addEvent
-                        ({
-                            start_date: sd,
-                            end_date: ed,
-                            text: "Reserva 1",
-                            holder: "John", // userdata
-                            room: "5", // userdata
-                            from_server: true
-                        });
-
-                sd = new Date();
-                sd.setMinutes(sd.getMinutes() + 60);
-                sd.setMinutes(0, 0, 0);
-
-                ed = new Date();
-                ed.setMinutes(ed.getMinutes() + 120);
-                ed.setMinutes(0, 0, 0);
-
-                scheduler.addEvent
-                        ({
-                            start_date: addDays(sd, 1),
-                            end_date: addDays(ed, 1),
-                            text: "Reserva 2",
-                            holder: "John", // userdata
-                            room: "5", // userdata
-                            from_server: true
-                        });
-
-                sd = new Date();
-                sd.setMinutes(sd.getMinutes() + 180);
-                sd.setMinutes(0, 0, 0);
-
-                ed = new Date();
-                ed.setMinutes(ed.getMinutes() + 240);
-                ed.setMinutes(0, 0, 0);
-
-                scheduler.addEvent
-                        ({
-                            start_date: addDays(sd, 1),
-                            end_date: addDays(ed, 1),
-                            text: "Reserva 3",
-                            holder: "John", // userdata
-                            room: "5", // userdata
-                            from_server: true
-                        });
-
-                sd = new Date();
-                sd.setMinutes(sd.getMinutes() + 120);
-                sd.setMinutes(0, 0, 0);
-
-                ed = new Date();
-                ed.setMinutes(ed.getMinutes() + 180);
-                ed.setMinutes(0, 0, 0);
-
-                scheduler.addEvent
-                        ({
-                            start_date: addDays(sd, 2),
-                            end_date: addDays(ed, 2),
-                            text: "Reserva 4",
-                            holder: "John", // userdata
-                            room: "5", // userdata
-                            from_server: true
-                        });
-            }
-
-            function readFromServer()
-            {
-                $.ajax
-                        ({
-                            dataType: "json",
-                            //url: "https://jsonplaceholder.typicode.com/users",
-                            type: "GET",
-                            success: function (json)
-                            {
-                                $.each(json, function (idx, obj)
-                                {
-                                    var name = obj.name;
-                                    var email = obj.email;
-
-                                    var sd = new Date();
-                                    sd.setHours(idx + 8);
-                                    sd.setMinutes(0, 0, 0);
-
-                                    var ed = new Date();
-                                    ed.setHours(idx + 9);
-                                    ed.setMinutes(0, 0, 0);
-
-                                    scheduler.addEvent
-                                            ({
-                                                start_date: sd,
-                                                end_date: ed,
-                                                text: name,
-                                                from_server: true
-                                            });
-                                });
-                            }
-                        });
-            }
-
-            function readFromJSP()
-            {
-                $.ajax
-                        ({
-                            dataType: "json",
-                            url: "reservas.jsp",
-                            data: {opc: "listar"},
-                            type: "GET",
-                            success: function (json)
-                            {
-                                $.each(json.reservas, function (idx, obj)
-                                {
-                                    var nome = obj.nome;
-                                    var email = obj.email;
-                                    var startDate = new Date(obj.start_date.time);
-                                    var endDate = new Date(obj.end_date.time);
-
-                                    scheduler.addEvent
-                                            ({
-                                                start_date: startDate,
-                                                end_date: endDate,
-                                                text: nome,
-                                                from_server: true
-                                            });
-                                });
-                            }
-                        });
-            }
-
-            scheduler.locale =
+                    });   
+                        
+                    $("#btn_criar_conta").click(function()
                     {
-                        date:
-                                {
-                                    month_full: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
-                                    month_short: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
-                                    day_full: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
-                                    day_short: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
-                                },
-                        labels:
-                                {
-                                    dhx_cal_today_button: "Hoje",
-                                    day_tab: "Dia",
-                                    week_tab: "Semana",
-                                    month_tab: "Mês",
-                                    new_event: "Novo",
-                                    icon_save: "Salvar",
-                                    icon_cancel: "Cancelar",
-                                    icon_details: "Detalhes",
-                                    icon_edit: "Editar",
-                                    icon_delete: "Deletar",
-                                    confirm_closing: "Dados não salvos serão perdidos, confirma?", // Your changes will be lost, are your sure?
-                                    confirm_deleting: "Reserva será apagada, confirma?",
-                                    section_description: "Descrição",
-                                    section_time: "Tempo",
-                                    full_day: "Dia inteiro",
-
-                                    /*agenda view extension*/
-                                    agenda_tab: "Agenda",
-                                    date: "Data",
-                                    description: "Descrição",
-
-                                    /*year view extension*/
-                                    year_tab: "Ano",
-
-                                    /* week agenda extension */
-                                    week_agenda_tab: "Agenda",
-
-                                    /*grid view extension*/
-                                    grid_tab: "Grade",
-
-                                    /* touch tooltip*/
-                                    drag_to_create: "Arraste para criar",
-                                    drag_to_move: "Arraste para mover",
-
-                                    /* dhtmlx message default buttons */
-                                    message_ok: "OK",
-                                    message_cancel: "Cancelar",
-
-                                    /* wai aria labels for non-text controls */
-                                    next: "Próximo",
-                                    prev: "Anterior",
-                                    year: "Ano",
-                                    month: "Mês",
-                                    day: "Dia",
-                                    hour: "Hora",
-                                    minute: "Minuto"
-                                }
-                    };
-
-            // specify event duration in minutes for auto end time
-            scheduler.config.event_duration = 15;
-            scheduler.config.auto_end_date = true;
-
-            // 0 refers to Sunday, 6 - to Saturday
-            scheduler.ignore_month = scheduler.ignore_week = function (date)
-            {
-                if (date.getDay() === 6 || date.getDay() === 0) //hides Saturdays and Sundays
-                    return true;
-            };
-
-            scheduler.config.collision_limit = 1;
-            scheduler.attachEvent("onEventCollision", function (ev, evs)
-            {
-                if (evs.length > 0)
-                {
-                    alert("Há um conflito de horário com outra reserva");
-                    return true;
-                } else
-                {
-                    return false;
-                }
-            });
+                        window.location.href = "criar_conta.html";
+                    });
+                    
+                   
+                      
+                </script>  
             
-            scheduler.attachEvent("onBeforeDrag", function (id, mode, e)
-            {
-                    var ev = scheduler.getEvent(id); 
-                    if (ev.is_break)
-                    {
-                            return false;
-                    }
-                    else
-                    {
-                            return true;
-                    }
-            });
-
-            scheduler.attachEvent("onClick", function (id, e)
-            {
-                    var ev = scheduler.getEvent(id);
-                    if (ev.is_break)
-                    {
-                            return false;
-                    }
-                    else
-                    {
-                            return true;
-                    }
-            });		
-
-            scheduler.attachEvent("onDblClick", function (id, e)
-            {
-                    var ev = scheduler.getEvent(id);
-                    if (ev.is_break)
-                    {
-                            return false;
-                    }
-                    else
-                    {
-                            return true;
-                    }
-            });            
-
-            scheduler.attachEvent("onEventAdded", function (id, ev)
-            {
-                if (!ev.from_server)
-                {
-                    alert("Adicionou agendamento, enviar dados por ajax");
-                }
-            });
-
-            scheduler.attachEvent("onEventChanged", function (id, ev)
-            {
-                alert("Alterou agendamento, enviar dados por ajax");
-            });
-
-            scheduler.attachEvent("onEventDeleted", function (id, ev)
-            {
-                alert("Deletou agendamento, enviar dados por ajax");
-            });
-
-            scheduler.config.first_hour = 12;
-            scheduler.config.last_hour = 18;
-            scheduler.config.scroll_hour = new Date().getHours();
-            scheduler.init('scheduler_here', new Date(), "week");
-
-            //addFromServer();
-            readFromServer();
-            //loadFromServer();
-            //readFromJSP();
-        </script>
-        <br><br>
-        <button>exportar PDF</button>
     </body>
 </html>
